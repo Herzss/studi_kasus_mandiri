@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studi_kasus_mandiri/resto/resto_provider.dart';
 
+
 class NotaPesananPage extends StatelessWidget {
   const NotaPesananPage({super.key});
+
+  static const List<Map<String, dynamic>> pesananDummy = [
+    {'id': 'M01', 'jumlah': '2', 'harga': '25000', 'subtotal': '50000'},
+    {'id': 'M04', 'jumlah': '1', 'harga': '15000', 'subtotal': '15000'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +26,8 @@ class NotaPesananPage extends StatelessWidget {
         ],
       ),
       body: Consumer<RestoProvider>(
-        builder: (context, restoProvider, child) {
-          // print(restoProvider.toString());
-          return restoProvider.totalItemPesanan == 0
+        builder: (context, nota, child) {
+          return nota.pesanan.isEmpty
               ? const Center(
                   child: Text(
                     'Belum ada pesanan yang dipilih',
@@ -34,9 +39,9 @@ class NotaPesananPage extends StatelessWidget {
                     Expanded(
                       child: ListView.builder(
                         padding: const EdgeInsets.all(16),
-                        itemCount: restoProvider.pesanan.length,
+                        itemCount: nota.pesanan.length,
                         itemBuilder: (context, index) {
-                          final p = restoProvider.pesanan[index];
+                          final p = nota.pesanan[index];
                           return Card(
                             margin: const EdgeInsets.only(bottom: 10),
                             child: ListTile(
@@ -50,9 +55,9 @@ class NotaPesananPage extends StatelessWidget {
                                   color: Colors.red,
                                 ),
                                 onPressed: () {
-                                  // context
-                                  //     .read<RestoProvider>()
-                                  //     .hapusItemPesanan(index);
+                                  context
+                                      .read<RestoProvider>()
+                                      .hapusItemPesanan(p['id']);
                                 },
                               ),
                             ),
@@ -83,8 +88,8 @@ class NotaPesananPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Rp ${restoProvider.totalBayar}',
-                            style: TextStyle(
+                            'Rp ${nota.totalBayar}',
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.green,

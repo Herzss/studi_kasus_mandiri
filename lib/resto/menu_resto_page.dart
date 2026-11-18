@@ -54,19 +54,17 @@ class MenuRestoPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Resto Kampus'),
         actions: [
-          Consumer<RestoProvider>(
-            builder: (context, restoProvider, child) {
-              return IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/pesanan-resto');
-                },
-                icon: Badge(
-                  isLabelVisible: restoProvider.totalItemPesanan > 0,
-                  label: Text(restoProvider.totalItemPesanan.toString()),
-                  child: const Icon(Icons.receipt_long_outlined),
-                ),
-              );
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/pesanan-resto');
             },
+            icon: Consumer<RestoProvider>(
+              builder: (context, nota, child) => Badge(
+                isLabelVisible: nota.totalItemPesanan > 0,
+                label: Text('${nota.totalItemPesanan}'),
+                child: const Icon(Icons.receipt_long_outlined),
+              ),
+            ),
           ),
         ],
       ),
@@ -97,14 +95,8 @@ class MenuRestoPage extends StatelessWidget {
               subtitle: Text('Rp $harga | Stok: ${item['stok']}'),
               trailing: ElevatedButton(
                 onPressed: () {
-                  context.read<RestoProvider>().tambahItem({
-                    'id': item['id'],
-                    'nama': item['nama'],
-                    'harga': item['harga'],
-                    'jumlah': 1,
-                    'subtotal': item['harga'],
-                  });
-                  print(context.read<RestoProvider>().pesanan);
+                  context.read<RestoProvider>().tambahItem(item);
+
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

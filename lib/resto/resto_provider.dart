@@ -6,28 +6,44 @@ class RestoProvider extends ChangeNotifier {
   // method untuk mendapatkan daftar pesanan
   List<Map<String, dynamic>> get pesanan => _pesanan;
   // method untuk mendapatkan jumlah item di pesanan
-  int get totalItemPesanan => _pesanan.length;
+  int get totalItemPesanan {
+    int total = 0;
+
+    for (var item in _pesanan) {
+      total += int.parse(item['jumlah']);
+    }
+    return total;
+  }
+
   // method untuk mendapatkan total harga pesanan
   int get totalBayar {
     int total = 0;
-    for (var p in _pesanan) {
-      total += int.parse(p['subtotal']);
+    for (var item in _pesanan) {
+      total += int.parse(item['subtotal']);
     }
     return total;
   }
 
   // method untuk menambahkan item ke pesanan
   void tambahItem(Map<String, dynamic> item) {
-    if (_pesanan.any((p) => p['id'] == item['id'])) {
-      // jika item sudah ada di pesanan, update jumlahnya
-      final index = _pesanan.indexWhere((p) => p['id'] == item['id']);
-      _pesanan[index]['jumlah'] += item['jumlah'];
+    int index = _pesanan.indexWhere((pesanan) => pesanan['id'] == item['id']);
+
+    if (index != -1) {
+      int jumlah = int.parse(_pesanan[index]['jumlah']);
+      jumlah++;
+
+      _pesanan[index]['jumlah'] = jumlah.toString();
       _pesanan[index]['subtotal'] =
-          _pesanan[index]['jumlah'] * int.parse(_pesanan[index]['harga']);
+          (jumlah * int.parse(_pesanan[index]['harga'])).toString();
     } else {
-      // jika item belum ada di pesanan, tambahkan sebagai item baru
-      _pesanan.add(item);
+      _pesanan.add({
+        'id': item['id'],
+        'jumlah': '1',
+        'harga': item['harga'],
+        'subtotal': item['harga'],
+      });
     }
+
     notifyListeners();
   }
 
