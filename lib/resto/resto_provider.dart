@@ -47,8 +47,8 @@ class RestoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void hapusItemPesanan(int noPesanan) {
-    _pesanan.removeAt(noPesanan);
+  void hapusItemPesanan(String id) {
+    _pesanan.removeWhere((item) => item['id'] == id);
     notifyListeners();
   }
 
